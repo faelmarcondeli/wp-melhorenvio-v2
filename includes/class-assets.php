@@ -8,14 +8,14 @@ namespace App;
 class Assets {
 
 
-	function __construct() {
+        function __construct() {
 
-		if ( is_admin() ) {
-			add_action( 'admin_enqueue_scripts', array( $this, 'register' ), 5 );
-		} else {
-			add_action( 'wp_enqueue_scripts', array( $this, 'register' ), 5 );
-		}
-	}
+                if ( is_admin() ) {
+                        add_action( 'admin_enqueue_scripts', array( $this, 'register' ), 5 );
+                } elseif ( function_exists( 'melhor_envio_should_load_plugin' ) && melhor_envio_should_load_plugin() ) {
+                        add_action( 'wp_enqueue_scripts', array( $this, 'register' ), 5 );
+                }
+        }
 
 	/**
 	 * Register our app scripts and styles

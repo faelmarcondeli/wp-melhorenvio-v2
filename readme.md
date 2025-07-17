@@ -12,6 +12,8 @@ License URI: https://www.gnu.org/licenses/gpl-3.0.html
 
 Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
 
+Nota: os recursos do plugin são carregados apenas nas páginas de conta, carrinho e checkout do WooCommerce ou no painel administrativo.
+
 == Description ==
 Com o Melhor Envio é possível fazer gratuitamente cotações simultâneas com os Correios e diversas transportadoras privadas de forma ágil e eficiente. A plataforma possui contratos com várias empresas de logística para oferecer fretes em condições mais competitivas aos vendedores online.
 A tecnologia já ajudou mais de 50 mil lojistas a otimizar a gestão de fretes acessando uma série de vantagens exclusivas sem precisar negociar individualmente com as transportadoras.
