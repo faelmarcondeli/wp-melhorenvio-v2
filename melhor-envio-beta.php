@@ -2,7 +2,7 @@
 /*
 Plugin Name: Melhor Envio
 Plugin URI: https://melhorenvio.com.br
-Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio.
+Description: Plugin para cotação e compra de fretes utilizando a API da Melhor Envio. Os recursos do plugin carregam apenas nas páginas da conta, carrinho, checkout ou no admin.
 Version: 2.15.14
 Author: Melhor Envio
 Author URI: https://melhorenvio.com.br
@@ -179,6 +179,10 @@ final class Melhor_Envio_Plugin
      */
     public function init_plugin()
     {
+        if ( ! $this->should_load_plugin() && ( ! function_exists( 'wp_doing_ajax' ) || ! wp_doing_ajax() ) ) {
+            return;
+        }
+
         $this->includes();
         $this->init_hooks();
 
@@ -279,22 +283,24 @@ final class Melhor_Envio_Plugin
             return $styles;
         } );
 
-        add_filter('woocommerce_shipping_methods', function ($methods) {
-            $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
-            $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
-            $methods['melhorenvio_jadlog_package']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package';
-            $methods['melhorenvio_jadlog_package_centralized']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package_Centralized';
-            $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
-            $methods['melhorenvio_latam_juntos']  = 'WC_Melhor_Envio_Shipping_Latam_Juntos';
-            $methods['melhorenvio_loggi_express']  = 'WC_Melhor_Envio_Shipping_Loggi_Express';
-            $methods['melhorenvio_loggi_coleta']  = 'WC_Melhor_Envio_Shipping_Loggi_Coleta';
-            $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
-            $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
-            $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
-            $methods['melhorenvio_buslog_rodoviario']  = 'WC_Melhor_Envio_Shipping_Buslog_Rodoviario';
-            $methods['melhorenvio_jet_standard']  = 'WC_Melhor_Envio_Shipping_JeT_Standard';
-            return $methods;
-        });
+        if ( $this->should_load_plugin() ) {
+            add_filter('woocommerce_shipping_methods', function ($methods) {
+                $methods['melhorenvio_correios_pac']  = 'WC_Melhor_Envio_Shipping_Correios_Pac';
+                $methods['melhorenvio_correios_sedex']  = 'WC_Melhor_Envio_Shipping_Correios_Sedex';
+                $methods['melhorenvio_jadlog_package']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package';
+                $methods['melhorenvio_jadlog_package_centralized']  = 'WC_Melhor_Envio_Shipping_Jadlog_Package_Centralized';
+                $methods['melhorenvio_jadlog_com']  = 'WC_Melhor_Envio_Shipping_Jadlog_Com';
+                $methods['melhorenvio_latam_juntos']  = 'WC_Melhor_Envio_Shipping_Latam_Juntos';
+                $methods['melhorenvio_loggi_express']  = 'WC_Melhor_Envio_Shipping_Loggi_Express';
+                $methods['melhorenvio_loggi_coleta']  = 'WC_Melhor_Envio_Shipping_Loggi_Coleta';
+                $methods['melhorenvio_azul_amanha']  = 'WC_Melhor_Envio_Shipping_Azul_Amanha';
+                $methods['melhorenvio_azul_ecommerce']  = 'WC_Melhor_Envio_Shipping_Azul_Ecommerce';
+                $methods['melhorenvio_correios_mini']  = 'WC_Melhor_Envio_Shipping_Correios_Mini';
+                $methods['melhorenvio_buslog_rodoviario']  = 'WC_Melhor_Envio_Shipping_Buslog_Rodoviario';
+                $methods['melhorenvio_jet_standard']  = 'WC_Melhor_Envio_Shipping_JeT_Standard';
+                return $methods;
+            });
+        }
 
         add_filter('woocommerce_package_rates', 'orderingQuotationsByPrice', 10, 2);
         function orderingQuotationsByPrice($rates, $package)
@@ -389,6 +395,30 @@ final class Melhor_Envio_Plugin
     }
 
     /**
+     * Determine if plugin assets and hooks should load.
+     *
+     * @return bool
+     */
+    private function should_load_plugin()
+    {
+        $account  = function_exists('is_account_page') && is_account_page();
+        $cart     = function_exists('is_cart') && is_cart();
+        $checkout = function_exists('is_checkout') && is_checkout();
+
+        return is_admin() || $account || $cart || $checkout;
+    }
+
+    /**
+     * Public wrapper for should_load_plugin.
+     *
+     * @return bool
+     */
+    public function can_load_plugin()
+    {
+        return $this->should_load_plugin();
+    }
+
+    /**
      * What type of request is this?
      *
      * @param  string $type admin, ajax, cron or frontend.
@@ -415,5 +445,14 @@ final class Melhor_Envio_Plugin
         }
     }
 } // Melhor_Envio_Plugin
+
+/**
+ * Helper to check if plugin should load on current request.
+ *
+ * @return bool
+ */
+function melhor_envio_should_load_plugin() {
+    return Melhor_Envio_Plugin::init()->can_load_plugin();
+}
 
 Melhor_Envio_Plugin::init();
