@@ -108,7 +108,25 @@ final class Melhor_Envio_Plugin
 
         register_activation_hook(__FILE__, array($this, 'activate'));
 
-        add_action('plugins_loaded', array($this, 'init_plugin'), 9, false);
+        add_action('plugins_loaded', array($this, 'register_init'), 9, false);
+    }
+
+    /**
+     * Register plugin initialization on the appropriate hook.
+     *
+     * Ensures that WooCommerce conditional functions work as expected by
+     * delaying the check for front-end pages until after WordPress parses the
+     * current request.
+     *
+     * @return void
+     */
+    public function register_init()
+    {
+        if (is_admin() || (function_exists('wp_doing_ajax') && wp_doing_ajax())) {
+            $this->init_plugin();
+        } else {
+            add_action('wp', array($this, 'init_plugin'));
+        }
     }
 
     /**
