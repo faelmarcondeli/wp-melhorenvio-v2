@@ -15,9 +15,7 @@ class Assets {
                 if ( is_admin() ) {
                         add_action( 'admin_enqueue_scripts', array( $this, 'register' ), 5 );
                 } else {
-                        if ( $this->shouldLoadOnFrontend() ) {
-                                add_action( 'wp_enqueue_scripts', array( $this, 'register' ), 5 );
-                        }
+                        add_action( 'wp_enqueue_scripts', array( $this, 'register' ), 5 );
                 }
         }
 
@@ -54,6 +52,10 @@ class Assets {
          * @return void
          */
         public function register() {
+                if ( ! is_admin() && ! $this->shouldLoadOnFrontend() ) {
+                        return;
+                }
+
                 $this->register_scripts( $this->get_scripts() );
                 $this->register_styles( $this->get_styles() );
         }
