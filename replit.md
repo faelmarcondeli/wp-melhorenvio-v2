@@ -72,3 +72,14 @@ The "Build Assets" workflow runs `npm run dev` which watches for changes and reb
 
 - **woocommerce** - E-commerce platform
 - **woocommerce-extra-checkout-fields-for-brazil** - Brazilian checkout fields
+
+## Recent Changes
+
+### January 2026 - Performance Optimization Feature
+Added a new configuration option "Restrict frontend pages" that allows administrators to load frontend scripts only on checkout, cart, and my-account pages. This improves site performance by not loading unnecessary scripts on other pages.
+
+**Files modified:**
+- `Services/ConfigurationsService.php` - Added get/set methods for the new option
+- `includes/class-assets.php` - Added page restriction logic in the register() method
+- `assets/src/admin/components/Configuracoes.vue` - Added checkbox UI
+- `assets/src/admin/store/configuration.js` - Added state management for the option
