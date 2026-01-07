@@ -46,6 +46,7 @@ const configuration = {
             insurance_value: true
         },
         where_calculator: 'woocommerce_after_add_to_cart_form',
+        restrict_frontend_pages: false,
         agencySelected: null,
         agencyJadlogCentralizedSelected: null,
         agencyLoggiSelected: null,
@@ -153,6 +154,9 @@ const configuration = {
         },
         setTokenEnvironment: (state, data) => {
             state.token_enviroment = data;
+        },
+        setRestrictFrontendPages: (state, data) => {
+            state.restrict_frontend_pages = data;
         }
     },
     getters: {
@@ -182,6 +186,7 @@ const configuration = {
         getConfigs: state => state.configs,
         getOptionsCalculator: state => state.options_calculator,
         getEnvironment: state => state.token_enviroment,
+        getRestrictFrontendPages: state => state.restrict_frontend_pages,
     },
     actions: {
         getConfigs: ({ commit }, data) => {
@@ -254,6 +259,7 @@ const configuration = {
                         commit('setWhereCalculator', response.data.where_calculator)
                         commit('setOptionsCalculator', response.data.options_calculator)
                         commit('setTokenEnvironment', response.data.token_environment)
+                        commit('setRestrictFrontendPages', response.data.restrict_frontend_pages)
                         resolve(true)
                     }
                 }).catch((error) => {
@@ -395,6 +401,8 @@ const configuration = {
                 form.append('options_calculator[receipt]', data.options_calculator.receipt);
                 form.append('options_calculator[own_hand]', data.options_calculator.own_hand);
                 form.append('options_calculator[insurance_value]', data.options_calculator.insurance_value);
+
+                form.append('restrict_frontend_pages', data.restrict_frontend_pages);
 
                 Axios.post(`${ajaxurl}?action=save_configuracoes`, form).then(function (response) {
                     if (response && response.status === 200) {

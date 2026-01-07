@@ -590,6 +590,28 @@
     <hr />
 
     <div class="wpme_config" style="width: 50%">
+      <h2>Otimização de performance</h2>
+      <p>
+        Ao habilitar essa opção, os scripts do plugin no frontend serão carregados
+        apenas nas páginas de checkout, carrinho e minha conta. Isso pode melhorar
+        a performance do seu site, mantendo a funcionalidade de cálculo de fretes.
+      </p>
+      <div class="wpme_flex">
+        <ul class="wpme_address">
+          <li>
+            <input
+              type="checkbox"
+              v-model="restrict_frontend_pages"
+              data-cy="input-restrict-frontend-pages"
+            />
+            <span>Carregar scripts apenas em checkout, carrinho e minha conta</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr />
+
+    <div class="wpme_config" style="width: 50%">
       <h2>Diretório dos plugins</h2>
       <p>
         Em algumas instâncias do wordpress, o caminho do diretório de plugins
@@ -758,6 +780,7 @@ export default {
       },
       where_calculator: "woocommerce_after_add_to_cart_form",
       where_calculator_collect,
+      restrict_frontend_pages: false,
     };
   },
   computed: {
@@ -789,6 +812,7 @@ export default {
       options_calculator_: "getOptionsCalculator",
       token_environment: "getEnvironment",
       configs: "getConfigs",
+      restrict_frontend_pages_: "getRestrictFrontendPages",
     }),
     keysWhereCalculatorCollect() {
       return Object.keys(this.where_calculator_collect);
@@ -836,6 +860,7 @@ export default {
       data["path_plugins"] = this.path_plugins;
       data["options_calculator"] = this.options_calculator;
       data["dimension_default"] = this.dimension;
+      data["restrict_frontend_pages"] = this.restrict_frontend_pages;
 
       let respSave = this.saveAll(data);
 
@@ -1228,6 +1253,9 @@ export default {
     },
     options_calculator_(e) {
       this.options_calculator = e;
+    },
+    restrict_frontend_pages_(e) {
+      this.restrict_frontend_pages = e;
     },
   },
   mounted() {
